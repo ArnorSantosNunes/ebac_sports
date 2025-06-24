@@ -1,19 +1,27 @@
+import { useSelector } from 'react-redux'
 import * as S from './styles'
 
-import { Produto } from '../../App'
-
 import cesta from '../../assets/cesta.png'
-import { paraReal } from '../Produto'
+import { RootReducer } from '../../store'
+import { paraReal } from '../Produto' // Importe a função paraReal do componente Produto
 
 type Props = {
-  itensNoCarrinho: Produto[]
-  favoritos: Produto[]
+  favoritos: {
+    id: number
+    nome: string
+    preco: number
+    imagem: string
+  }[]
 }
 
-const Header = ({ itensNoCarrinho, favoritos }: Props) => {
+const Header = ({ favoritos }: Props) => {
+  const itensNoCarrinho = useSelector(
+    (state: RootReducer) => state.carrinho.itens
+  )
+
+  // Calcular o valor total do carrinho
   const valorTotal = itensNoCarrinho.reduce((acc, item) => {
-    acc += item.preco
-    return acc
+    return acc + item.preco
   }, 0)
 
   return (
@@ -21,9 +29,10 @@ const Header = ({ itensNoCarrinho, favoritos }: Props) => {
       <h1>EBAC Sports</h1>
       <div>
         <span>{favoritos.length} favoritos</span>
-        <img src={cesta} />
+        <img src={cesta} alt="Cesta de compras" />
         <span>
-          {itensNoCarrinho.length} itens, valor total: {paraReal(valorTotal)}
+          {itensNoCarrinho.length} itens no carrinho $ Valor total:{' '}
+          {paraReal(valorTotal)}
         </span>
       </div>
     </S.Header>
